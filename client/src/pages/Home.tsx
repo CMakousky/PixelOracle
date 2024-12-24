@@ -120,7 +120,7 @@ export default function Home() {
     };
 
     // Function that uses a text input to retrieve a game from RAWG by slug, and then add the results to PENDING FAVORITES CHANGES
-    const searchForGames = async (event: FormEvent, gameSlug: string) => {
+    const searchGamesBySlug = async (event: FormEvent, gameSlug: string) => {
         event.preventDefault();
         try {
             // Search RAWG database for game info by slug
@@ -205,7 +205,7 @@ export default function Home() {
             </form>
 
             {/* search bar to build rawg request */}
-            <form className="searchArea" onSubmit={(event: FormEvent) => searchForGames(event, search)}>
+            <form className="searchArea" onSubmit={(event: FormEvent) => searchGamesBySlug(event, search)}>
                 <input
                     value={search}
                     placeholder="Find a Game by Slug!"
