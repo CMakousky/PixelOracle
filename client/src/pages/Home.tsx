@@ -1,11 +1,9 @@
 //imports
 import { useState, FormEvent, useEffect } from "react";
 import { gameInfoSlug, searchGamesByName } from "../api/searchRAWG";
-import { getFavorites, addFavorites } from "../api/favoriteGames-api";
+import { getFavorites, insertFavorites } from "../api/favoriteGames-api";
 import { RawgData } from "../interfaces/RawgData";
 import RecsPanel from "../components/GameRecs";
-// import { data } from "react-router-dom";
-// import GameList from "../components/GameList";
 
 //return code
 export default function Home() {
@@ -14,19 +12,19 @@ export default function Home() {
     const handleInputchange = (e: any) => {
         const { value } = e.target;
         setSearch(value);
-    }
+    };
     // useState for the Seach by Name field
     const [search1, setSearch1] = useState<string>('');
     const handleInputchange2 = (e: any) => {
         const { value } = e.target;
         setSearch1(value);
-    }
+    };
     // useState for the Favorite Deletion Field
     const [indexSlug, setIndexSlug] = useState<string>('');
     const handleInputchange1 = (e: any) => {
         const { value } = e.target;
         setIndexSlug(value);
-    }
+    };
     // useState for the saved user favorites
     const [userFavorites, setUserFavorites] = useState<RawgData[]>([{
         name: '',
@@ -36,6 +34,9 @@ export default function Home() {
     }]);
     // useState for pending changes to the user favorites
     const [newFavorites, setNewFavorites] = useState<RawgData[]>([] as RawgData[]);
+    
+    // useState to track changes to newFavorites
+    const [oldFavorites, setOldFavorites] = useState<RawgData[]>([] as RawgData[]);
 
     // useState for the rendering of recs page
     const [recMessage, setRecMessage] = useState<string>('Consult the Oracle.');
@@ -56,31 +57,15 @@ export default function Home() {
             console.log('setPanel true');
             setRecMessage('Enough of the Oracle.');
         }
-    }
+    };
 
     // Troubleshooting function to display useState for the saved user favorites
-    // const viewCurrentFavorites = async (event: FormEvent) => {
-    //     event.preventDefault();
-    //     console.log(userFavorites)};
+    // const viewCurrentFavorites = async () => {
+    //     console.log("CURRENT FAVORITES:"userFavorites)};
 
     // Troubleshooting function to display useState for pending changes to the user favorites
-    // const viewNewFavorites = async (event: FormEvent) => {
-    //     event.preventDefault();
-    //     console.log("Pending Favorites List:");
-    //     console.log(newFavorites);
-    // }
-
-    // Function to convert RAWG data into our custom RawgData type
-    // const convertRAWG = (event: FormEvent) => {
-    //     event.preventDefault();
-    //     const conversion = [{
-    //         name: `${newFavorites[0].name}`,
-    //         slug: `${newFavorites[0].slug}`,
-    //         background_image: `${newFavorites[0].background_image}`,
-    //         released: `${newFavorites[0].released}`
-    //     }]
-    //     setNewFavorites(conversion);
-    //     console.log('RAWG API reply cleaned to match custom RawgData type format.');
+    // const viewNewFavorites = async () => {
+    //     console.log("PENDING FAVORITES LIST:", newFavorites);
     // };
 
     // Function to clean the reply data from RAWG
@@ -91,140 +76,119 @@ export default function Home() {
             background_image: `${data.background_image}`,
             released: `${data.released}`
         }]
-        console.log('RAWG API reply cleaned to match custom RawgData type format.');
-        console.log(conversion);
+        console.log('RAWG API reply cleaned to match custom RawgData type format.', conversion);
         return conversion;
     };
 
-    // Function to concatinate the user favorites with the new favorite selection
-    // const concatenateFavorites = (event: FormEvent) => {
-    //     event.preventDefault();
-    //     const favoritesArray = [...userFavorites, ...newFavorites]
-    //     console.log(favoritesArray);
-    //     setNewFavorites(favoritesArray);
-    // };
-
-    // Function to concatinate the user favorites with the new favorite selection
+    // Function to concatenate the user favorites with the new favorite selection
     const concatenateThings = async (things: RawgData[]) => {
         let favoritesArray = [...userFavorites, ...things]
         if (newFavorites.length !== 0) {favoritesArray = [...newFavorites, ...things]};
-        console.log(favoritesArray);
         return favoritesArray;
+    };
+
+    // Function to retrieve favorite games list by user_id
+    const getUserFavorites = async () => {
+        try {
+            const data: RawgData[] = await getFavorites(1);
+            // Update the "userFavorites" useState with data retrieved from server
+            setUserFavorites(data);
+            return data;
+        } catch (err) {
+            console.error('No matches found!', err);
+        }
+    };
+
+    // Function to display saved user favorites
+    const displayUserFavorites = async () => {
+        try {
+            const savedFavorites = await getUserFavorites();
+            console.log("SAVED FAVORITES:", savedFavorites);
+        } catch (err) {
+            console.error('No matches found!', err);
+        }
+    };
+
+    // Function to insert updated favorites list into SQL server
+    const updateFavorites = async () => {
+        if (newFavorites.length !== 0 && newFavorites !== oldFavorites) {
+            await insertFavorites(1, newFavorites);
+            setOldFavorites(newFavorites);
+        } else {
+            console.log("NO PENDING CHANGES TO FAVORITES.");
+        }
     };
 
     // Function that uses a text input to retrieve a game from RAWG by slug, and then add the results to PENDING FAVORITES CHANGES
     const searchForGames = async (event: FormEvent, gameSlug: string) => {
         event.preventDefault();
         try {
+            // Search RAWG database for game info by slug
             const data = await gameInfoSlug(gameSlug);
             console.log(data);
+            // Clean the data to match the custom RawgData type
             const cleanData = await cleanResults(data);
             console.log("Appending search results to Pending Favorites List.");
+            // Concatenate the cleaned data with the array of existing user favorites
             const newArray = await concatenateThings(cleanData);
+            console.log("PENDING FAVORITES LIST:", newArray);
+            // Update the "newFavorites" useState with the favoritesArray
             setNewFavorites(newArray);
-        } catch (err) {
-            console.error('No matches found!', err);
-        }
-    }
-
-    // Function to search all games on RAWG
-    // const searchAllGames = async (event: FormEvent) => {
-    //     event.preventDefault();
-    //     try {
-    //         const data = await searchGames();
-    //         console.log(data);
-    //     } catch (err) {
-    //         console.error('No matches found!', err);
-    //     }
-    // }
-
-    // Function to retrieve favorite games list by user_id
-    const getUserFavorites = async (event: FormEvent) => {
-        event.preventDefault();
-        try {
-            const data: RawgData[] = await getFavorites(1);
-            console.log(data);
-            setUserFavorites(data);
-        } catch (err) {
-            console.error('No matches found!', err);
-        }
-    }
-
-    // Function to retrieve favorite games list by user_id
-    const initUserFavorites = async () => {
-        try {
-            const data: RawgData[] = await getFavorites(1);
-            setUserFavorites(data);
-        } catch (err) {
-            console.error('No matches found!', err);
-        }
-    }
-
-    // Function to locate the index of a specific favorite object and remove it from the array
-    const locateRemoveIndex = async (event: FormEvent, slug: string) => {
-        event.preventDefault();
-        try {
-            const resultsIndex = userFavorites.findIndex((element) => (element.slug === `${slug}`));
-            console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
-            const arrayLeft = userFavorites.slice(0, resultsIndex);
-            const arrayRight = userFavorites.slice(resultsIndex+1);
-            console.log("Pending Favorites List:");
-            console.log([...arrayLeft, ...arrayRight]);
-            setNewFavorites([...arrayLeft, ...arrayRight]);
         } catch (err) {
             console.error('No matches found!', err);
         }
     };
 
-    // Function to update the favorite games list on a user profile
-    const addNewFavorites = async (event: FormEvent, user_id: number) => {
+    // Function to locate the index of a specific favorite object and remove it from the array
+    const removeFavoriteBySlug = async (event: FormEvent, slug: string) => {
         event.preventDefault();
         try {
-            addFavorites(user_id, newFavorites);
+            let resultsIndex;
+            if (newFavorites.length === 0) {
+                resultsIndex = userFavorites.findIndex((element) => (element.slug === `${slug}`));
+            } else {
+                resultsIndex = newFavorites.findIndex((element) => (element.slug === `${slug}`));
+            };
+            if (resultsIndex !== -1) {
+                console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
+                // Slice the contents of userFavorites from index zero up to, but not including, resultsIndex into arrayLeft
+                const arrayLeft = userFavorites.slice(0, resultsIndex);
+                // Slice the contents of userFavorites from resultsIndex into arrayLeft
+                const arrayRight = userFavorites.slice(resultsIndex+1);
+                console.log("PENDING FAVORITES LIST:", [...arrayLeft, ...arrayRight]);
+                // Update the "newFavorites" useState with [...arrayLeft, ...arrayRight]
+                setNewFavorites([...arrayLeft, ...arrayRight]);
+            } else {console.log(`Choose a slug from your favorites list.`)};
+
         } catch (err) {
             console.error('No matches found!', err);
         }
-    }
+    };
 
     // Function stack above functions to automatically add info to games database
     const addRAWGtoFavorites = async (event: FormEvent, gameTitle: string) => {
         event.preventDefault();
-    
         //Search RAWG for game by name
         try {
             const search = await searchGamesByName(gameTitle);
-            // const userfavs = await getFavorites(1);
-            // setUserFavorites(userfavs);
-            console.log(search);
-            const fav = search[0];
-            // setNewFavorites([fav]);
-
-            const conversion = [{
-                name: `${fav.name}`,
-                slug: `${fav.slug}`,
-                background_image: `${fav.background_image}`,
-                released: `${fav.released}`
-            }]
-            // setNewFavorites(conversion);
-
-            // const favoritesArray = [...userFavorites, ...conversion];
+            console.log("Search Results:", search);
+            // Select the first result in the returned search data array
+            const fav: RawgData = search[0];
+            // Clean the data to match the custom RawgData type
+            const conversion: RawgData[] = await cleanResults(fav);
+            // Concatenate the cleaned data with the array of existing user favorites
             const favoritesArray = await concatenateThings(conversion);
-            console.log('CONCAT', favoritesArray);
+            // console.log('CONCAT', favoritesArray);
+            console.log('PENDING FAVORITES LIST:', favoritesArray);
+            // Update the "newFavorites" useState with the favoritesArray
             setNewFavorites(favoritesArray);
 
         } catch (error) {
             console.error('No Matches Found!', error);
         }
-        // try {
-        //     addFavorites(user_id, newFavorites);
-        // } catch (error) {
-        //     console.error('Unable to update Favorites!', error);
-        // }
-    }
+    };
 
-    useEffect(() => {
-        initUserFavorites();
-    }, []);
+    useEffect(() => {getUserFavorites()}, []);
 
     return (
         <>
@@ -233,16 +197,11 @@ export default function Home() {
                 <p>Need a new game? Consult the Oracle...</p>
                 {/* background image - simple texture */}
             </div>
-            <form onSubmit={(event: FormEvent) => getUserFavorites(event)}>
-                <button type="submit">RETRIEVE SAVED FAVORITES</button>
-            </form>
 
-            {/* <form onSubmit={(event: FormEvent) => viewNewFavorites(event)}>
-                <button type="submit">VIEW PENDING FAVORITES CHANGES</button>
-            </form> */}
-
-            <form onSubmit={(event: FormEvent) => addNewFavorites(event, 1)}>
-                <button type="submit">UPDATE FAVORITES LIST</button>
+            <form>
+                <button type="button" onClick={() => displayUserFavorites()}>DISPLAY SAVED FAVORITES</button>
+                <button type="button" onClick={() => updateFavorites()}>UPDATE FAVORITES LIST</button>
+                {/* <button type="button" onClick={() => viewNewFavorites()}>VIEW PENDING FAVORITES CHANGES</button> */}
             </form>
 
             {/* search bar to build rawg request */}
@@ -266,15 +225,7 @@ export default function Home() {
                 <button type="submit">SEARCH BY TITLE</button>
             </form>
 
-            {/* <form onSubmit={(event: FormEvent) => convertRAWG(event)}>
-                <button type="submit">CONVERT SEARCH DATA</button>
-            </form> */}
-
-            {/* <form onSubmit={(event: FormEvent) => concatenateFavorites(event)}>
-                <button type="submit">CONCATENATE FAVORITES</button>
-            </form> */}
-
-            <form className="searchArea" onSubmit={(event: FormEvent) => locateRemoveIndex(event, indexSlug)}>
+            <form className="searchArea" onSubmit={(event: FormEvent) => removeFavoriteBySlug(event, indexSlug)}>
                 <input
                     value={indexSlug}
                     placeholder="Flag Favorite for Deletion by Slug."

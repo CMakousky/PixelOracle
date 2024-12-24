@@ -54,7 +54,7 @@ PixelOracle was created collaboratively by Lucas Hallman, Christopher Makousky, 
 
 
 
-GitHub Repository: https://github.com/johben17796/PixelOracle
+GitHub Repository: https://github.com/CMakousky/PixelOracle
 
 
 

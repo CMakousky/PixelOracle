@@ -1,7 +1,6 @@
-// import { ApiMessage } from "../interfaces/ApiMessage";
 import { RawgData } from "../interfaces/RawgData";
 
-const searchGames = async (): Promise<RawgData> => {
+const searchAllGames = async (): Promise<RawgData> => {
     try {
       const response = await fetch('/api/RAWG/allGames', {
         headers: {
@@ -77,4 +76,4 @@ const searchGames = async (): Promise<RawgData> => {
     }
   };
 
-export { searchGames, searchGamesByName, gameInfo, gameInfoSlug };
+export { searchAllGames, searchGamesByName, gameInfo, gameInfoSlug };

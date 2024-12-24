@@ -18,9 +18,8 @@ const getFavorites = async (user_id: number) => {
     }
 };
 
-const addFavorites = async (user_id: number , newFavorites: RawgData[]) => {
-    // console.log({"favorites": newFavorites});
-    console.log(`Updating Favorites List.`);
+const insertFavorites = async (user_id: number, newFavorites: RawgData[]) => {
+    console.log(`UPDATING FAVORITES LIST.`);
 try {
     const request = await fetch(`/api/users/addFavoriteGames/${user_id}`, {
     headers: {
@@ -38,4 +37,4 @@ try {
 }
 };
 
-export { getFavorites, addFavorites };
+export { getFavorites, insertFavorites };
