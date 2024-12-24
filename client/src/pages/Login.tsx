@@ -1,87 +1,118 @@
-import React, { useState } from "react";
-// import axios from "axios";
-import bcrypt from "bcryptjs";
+import { useState, FormEvent, ChangeEvent } from "react";
+
+// import bcrypt from "bcryptjs";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-const Login: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [token, setToken] = useState<string | null>(null);
-  const [error, setError] = useState("");
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+import Auth from '../utils/auth';
+import { login } from '../api/authAPI';
+import type { UserLogin } from '../interfaces/UserLogin';
+
+const Login = () => {
+  // const [username, setUsername] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [token, setToken] = useState<string | null>(null);
+  // const [error, setError] = useState("");
+  // const [isRegistering, setIsRegistering] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
+
+  const [loginData, setLoginData] = useState<UserLogin>({
+    username: '',
+    password: '',
+  });
+
+  // Handle changes in the input fields
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setLoginData({
+      ...loginData,
+      [name]: value,
+    });
+  };
+
+  // Handle form submission for login
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      // Call the login API endpoint with loginData
+      const data = await login(loginData);
+      // If login is successful, call Auth.login to store the token in localStorage
+      Auth.login(data.token);
+    } catch (err) {
+      console.error('Failed to login', err);
+    }
+  };
 
   const navigate = useNavigate();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+  // const handleRegister = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setError("");
+  //   setIsLoading(true);
 
-    try {
-      const existingUser = localStorage.getItem(`user_${username}`);
-      if (existingUser) {
-        setError("User already exists. Please log in.");
-        setIsLoading(false);
-        return;
-      }
+  //   try {
+  //     const existingUser = localStorage.getItem(`user_${username}`);
+  //     if (existingUser) {
+  //       setError("User already exists. Please log in.");
+  //       setIsLoading(false);
+  //       return;
+  //     }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const userData = JSON.stringify({ username, email, password: hashedPassword });
-      localStorage.setItem(`user_${username}`, userData);
+  //     const hashedPassword = await bcrypt.hash(password, 10);
+  //     const userData = JSON.stringify({ username, email, password: hashedPassword });
+  //     localStorage.setItem(`user_${username}`, userData);
 
-      alert("Registration successful! Please log in.");
-      setIsRegistering(false);
-    } catch (err) {
-      console.error(err);
-      setError("Registration failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     alert("Registration successful! Please log in.");
+  //     setIsRegistering(false);
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError("Registration failed. Please try again.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+  // const handleLogin = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setError("");
+  //   setIsLoading(true);
 
-    try {
-      const storedUser = localStorage.getItem(`user_${username}`);
-      if (!storedUser) {
-        setError("User not found. Please register.");
-        setIsLoading(false);
-        return;
-      }
+  //   try {
+  //     const storedUser = localStorage.getItem(`user_${username}`);
+  //     if (!storedUser) {
+  //       setError("User not found. Please register.");
+  //       setIsLoading(false);
+  //       return;
+  //     }
 
-      const { password: storedPassword } = JSON.parse(storedUser);
-      const passwordMatch = await bcrypt.compare(password, storedPassword);
+  //     const { password: storedPassword } = JSON.parse(storedUser);
+  //     const passwordMatch = await bcrypt.compare(password, storedPassword);
 
-      if (passwordMatch) {
-        const mockToken = `mock_token_${Date.now()}`;
-        setToken(mockToken);
-        localStorage.setItem("rawg_token", mockToken);
-        alert("Login successful!");
-        //navigate("/dashboard"); // Navigate to dashboard
-      } else {
-        setError("Invalid credentials. Please try again.");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (passwordMatch) {
+  //       const mockToken = `mock_token_${Date.now()}`;
+  //       setToken(mockToken);
+  //       localStorage.setItem("rawg_token", mockToken);
+  //       alert("Login successful!");
+  //       //navigate("/dashboard"); // Navigate to dashboard
+  //     } else {
+  //       setError("Invalid credentials. Please try again.");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError("Login failed. Please try again.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <div className="login-page">
       <h1>Login Page</h1>
-      <h1>RAWG API {isRegistering ? "Register" : "Login"}</h1>
+      {/* <h1>RAWG API {isRegistering ? "Register" : "Login"}</h1>
       {token ? (
         <div>
-          <p>Welcome to Four Tet RAWG API! You are logged in.</p>
+          <p>Welcome to PixelOracle! You are logged in.</p>
           <button
             onClick={() => {
               setToken(null);
@@ -150,7 +181,40 @@ const Login: React.FC = () => {
             </>
           )}
         </p>
-      )}
+      )} */}
+
+      <div className='form-container'>
+        <form className='form login-form' onSubmit={handleSubmit}>
+          <h1>Login</h1>
+          {/* Username input field */}
+          <div className='form-group'>
+            <label>Username</label>
+            <input
+              className='form-input'
+              type='text'
+              name='username'
+              value={loginData.username || ''}
+              onChange={handleChange}
+            />
+          </div>
+          {/* Password input field */}
+          <div className='form-group'>
+            <label>Password</label>
+            <input
+              className='form-input'
+              type='password'
+              name='password'
+              value={loginData.password || ''}
+              onChange={handleChange}
+            />
+          </div>
+          {/* Submit button for the login form */}
+          <div className='form-group'>
+            <button className='btn btn-primary' type='submit'>Login</button>
+          </div>
+        </form>
+      </div>
+
       <button className="home-button" onClick={() => navigate("/")}>
         Go Back to Home
       </button>

@@ -1,5 +1,5 @@
 //imports
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import { gameInfoSlug, searchGamesByName } from "../api/searchRAWG";
 import { getFavorites, insertFavorites } from "../api/favoriteGames-api";
 import { RawgData } from "../interfaces/RawgData";
@@ -188,7 +188,7 @@ export default function Home() {
         }
     };
 
-    useEffect(() => {getUserFavorites()}, []);
+    // useEffect(() => {getUserFavorites()}, []);
 
     return (
         <>
