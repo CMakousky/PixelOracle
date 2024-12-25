@@ -1,9 +1,9 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import Auth from '../utils/auth';
-import { login } from '../api/authAPI';
+import { login, newUser } from '../api/authAPI';
 import type { UserLogin } from '../interfaces/UserLogin';
 import type { RegisterUser } from "../interfaces/RegisterUser";
-import { newUser } from "../api/favoriteGames-api";
+
 // import bcrypt from "bcryptjs";
 // import { useNavigate } from "react-router-dom";
 import "./Login.css";

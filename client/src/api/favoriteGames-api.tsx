@@ -1,5 +1,4 @@
 import { RawgData } from "../interfaces/RawgData";
-import type { RegisterUser } from "../interfaces/RegisterUser";
 
 const getFavorites = async (user_id: number) => {
     try {
@@ -38,28 +37,4 @@ const insertFavorites = async (user_id: number, newFavorites: RawgData[]) => {
     }
 };
 
-const newUser = async (newUserData: RegisterUser) => {
-    console.log(`REGISTERING ${newUserData.username}.`);
-    try {
-        const request = await fetch(`/api/users/`, {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        method:"POST",
-        body: JSON.stringify(
-            {
-                "username": newUserData.username,
-                "email": newUserData.email,
-                "password": newUserData.password
-            })
-        });
-        if(!request.ok) {
-        throw new Error('Registration Failed, check network tab!');
-        }
-    } catch (err) {
-        console.log('Error on data insertion:', err);
-        return Promise.reject('Unable to register user.');
-    }
-};
-
-export { getFavorites, insertFavorites, newUser };
+export { getFavorites, insertFavorites };

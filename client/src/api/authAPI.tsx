@@ -1,4 +1,5 @@
 import { UserLogin } from "../interfaces/UserLogin";  // Import the UserLogin interface for typing userInfo
+import type { RegisterUser } from "../interfaces/RegisterUser";
 
 // Function to send a POST request to the '/auth/login' endpoint with user login information
 const login = async (userInfo: UserLogin) => {
@@ -26,6 +27,30 @@ const login = async (userInfo: UserLogin) => {
     console.log('Error from user login: ', err);  // Log any errors that occur during fetch
     return Promise.reject('Could not fetch user info');  // Return a rejected promise with an error message
   }
-}
+};
 
-export { login };  // Export the login function to be used elsewhere in the application
+const newUser = async (newUserData: RegisterUser) => {
+  console.log(`REGISTERING ${newUserData.username}.`);
+  try {
+      const request = await fetch(`/api/users/`, {
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      method:"POST",
+      body: JSON.stringify(
+          {
+              "username": newUserData.username,
+              "email": newUserData.email,
+              "password": newUserData.password
+          })
+      });
+      if(!request.ok) {
+      throw new Error('Registration Failed, check network tab!');
+      }
+  } catch (err) {
+      console.log('Error on data insertion:', err);
+      return Promise.reject('Unable to register user.');
+  }
+};
+
+export { login, newUser };  // Export the login function to be used elsewhere in the application
