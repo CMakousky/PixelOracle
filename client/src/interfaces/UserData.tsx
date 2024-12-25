@@ -1,8 +1,8 @@
 import { RawgData } from "./RawgData";
 
 export interface UserData {
-  id: number | null;
-  username: string | null;
-  email: string | null;
+  id: number;
+  username: string;
+  email: string;
   favorites: Array<RawgData>;
 }

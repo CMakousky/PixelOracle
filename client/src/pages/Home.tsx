@@ -1,9 +1,11 @@
 //imports
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { gameInfoSlug, searchGamesByName } from "../api/searchRAWG";
 import { getFavorites, insertFavorites } from "../api/favoriteGames-api";
 import { RawgData } from "../interfaces/RawgData";
 import RecsPanel from "../components/GameRecs";
+import auth from "../utils/auth";
+import { UserData } from "../interfaces/UserData";
 
 //return code
 export default function Home() {
@@ -59,6 +61,24 @@ export default function Home() {
         }
     };
 
+    // useState for the current user_id
+    const [currentUser, setCurrentUser] = useState<number>(0);
+
+    // Function to extract current user ID from JWT
+    const extractJWT = () => {
+        const loggedIn = auth.loggedIn();
+        console.log(loggedIn);
+        if (loggedIn) {
+            const token: UserData = auth.extractID() as UserData;
+            console.log(token);
+            setCurrentUser(token.id);
+        } else {
+            console.log("Please login to view saved favorites.");
+            setCurrentUser(0);
+        };
+        return;
+    };
+
     // Troubleshooting function to display useState for the saved user favorites
     // const viewCurrentFavorites = async () => {
     //     console.log("CURRENT FAVORITES:"userFavorites)};
@@ -90,7 +110,7 @@ export default function Home() {
     // Function to retrieve favorite games list by user_id
     const getUserFavorites = async () => {
         try {
-            const data: RawgData[] = await getFavorites(1);
+            const data: RawgData[] = await getFavorites(currentUser);
             // Update the "userFavorites" useState with data retrieved from server
             setUserFavorites(data);
             return data;
@@ -112,7 +132,7 @@ export default function Home() {
     // Function to insert updated favorites list into SQL server
     const updateFavorites = async () => {
         if (newFavorites.length !== 0 && newFavorites !== oldFavorites) {
-            await insertFavorites(1, newFavorites);
+            await insertFavorites(currentUser, newFavorites);
             setOldFavorites(newFavorites);
         } else {
             console.log("NO PENDING CHANGES TO FAVORITES.");
@@ -188,7 +208,7 @@ export default function Home() {
         }
     };
 
-    // useEffect(() => {getUserFavorites()}, []);
+    useEffect(() => {extractJWT();}, []);
 
     return (
         <>

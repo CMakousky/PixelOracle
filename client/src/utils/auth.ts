@@ -32,6 +32,19 @@ class AuthService {
       return false;
     }
   }
+
+  // Function to extract the user_id from JWT
+  extractID() {
+    try {
+      // Attempt to decode the provided token using jwtDecode, expecting a JwtPayload type.
+      const token = this.getToken();
+      const decoded = jwtDecode<JwtPayload>(token);
+      return (decoded);
+      } catch (err) {
+      // If decoding fails (e.g., due to an invalid token format), catch the error and return false.
+      console.log(err);
+    }
+  }
   
   // Retrieve the JWT token from localStorage
   getToken(): string {
