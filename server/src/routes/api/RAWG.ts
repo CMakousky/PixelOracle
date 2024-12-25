@@ -1,6 +1,5 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-// import { Game } from '../../models/Games.js';
 
 const router = express.Router();
 

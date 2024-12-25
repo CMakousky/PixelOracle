@@ -4,7 +4,7 @@ import { Game } from "../../models/Games.js";
 
 const router = Router();
 
-// GET user by id
+// GET /users/:id - user by id
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     // hoping this works, haven't had to use a join yet :O
@@ -25,7 +25,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// GET Favorites by specified user id
+// GET /users/getFavorites/:id - Favorites by specified user id
 router.get('/getFavorites/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -41,7 +41,7 @@ router.get('/getFavorites/:id', async (req: Request, res: Response) => {
   }
 });
 
-// POST new user
+// POST /users/ - new user
 router.post('/', async (req: Request, res: Response) => {
   try {
     const userData = await User.create(req.body);
@@ -51,7 +51,23 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Add favorites games to a specified user_id
+// DELETE /users/:id - Delete a user by id
+router.delete('/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findByPk(id);
+    if (user) {
+      await user.destroy();
+      res.json({ message: 'User deleted' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// PUT /users/addFavoriteGames/:id - Add favorites games to a specified user_id
 router.put('/addFavoriteGames/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   //The list of games must be an array of JSON following the Game type
@@ -71,7 +87,7 @@ router.put('/addFavoriteGames/:id', async (req: Request, res: Response) => {
   }
 });
 
-// DELETE user favorites
+// DELETE /users/deleteFavoriteGames/:id - user favorites
 router.delete('/deleteFavoriteGames/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
