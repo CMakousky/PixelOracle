@@ -1,12 +1,10 @@
 import { useState, FormEvent, ChangeEvent } from "react";
-
-// import bcrypt from "bcryptjs";
-import { useNavigate } from "react-router-dom";
-import "./Login.css";
-
 import Auth from '../utils/auth';
 import { login } from '../api/authAPI';
 import type { UserLogin } from '../interfaces/UserLogin';
+// import bcrypt from "bcryptjs";
+// import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
 const Login = () => {
   // const [username, setUsername] = useState("");
@@ -46,7 +44,7 @@ const Login = () => {
     }
   };
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // const handleRegister = async (e: React.FormEvent) => {
   //   e.preventDefault();
@@ -217,9 +215,9 @@ const Login = () => {
         </form>
       </div>
 
-      <button className="home-button" onClick={() => navigate("/")}>
+      {/* <button className="home-button" onClick={() => navigate("/")}>
         Go Back to Home
-      </button>
+      </button> */}
     </div>
   );
 };

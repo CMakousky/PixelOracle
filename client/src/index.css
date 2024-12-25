@@ -67,15 +67,18 @@ header {
 }
 
 nav {
-  height: 300px;
-  width: 200px;
-}
-
-nav > ul > li {
-  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 #loginButton {
+  height: 50px;
+  width: 250px;
+}
+
+#logoutButton {
   height: 50px;
   width: 250px;
 }
