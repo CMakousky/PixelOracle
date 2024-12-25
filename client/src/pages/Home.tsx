@@ -187,7 +187,11 @@ export default function Home() {
         }
     };
 
-    useEffect(() => {setCurrentUser(auth.selectUser())}, []);
+    useEffect(() => {
+        const user = auth.selectUser();
+        if (user !== 0) {console.log(auth.getProfile())};
+        setCurrentUser(user);
+    }, []);
 
     return (
         <>

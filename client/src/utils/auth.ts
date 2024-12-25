@@ -67,12 +67,11 @@ class AuthService {
   selectUser = (): number => {
     const loggedIn = this.loggedIn();
     let user: number = 0;
-    console.log("LOGGED IN =", loggedIn);
     if (loggedIn) {
         const token: UserData = this.extractID() as UserData;
         user = token.id;
     } else {
-        console.log("Please login to view saved favorites.");
+        console.log("USER NOT LOGGED IN.");
     };
     return user;
   };
