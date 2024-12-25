@@ -37,14 +37,14 @@ const Login = () => {
     });
   };
 
-    // Handle changes in the REGISTRATION input fields
-    const handleChangeR = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = e.target;
-      setRegistrationData({
-        ...registrationData,
-        [name]: value,
-      });
-    };
+  // Handle changes in the REGISTRATION input fields
+  const handleChangeR = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setRegistrationData({
+      ...registrationData,
+      [name]: value,
+    });
+  };
 
   // Handle form submission for login
   const handleSubmit = async (e: FormEvent) => {
@@ -214,10 +214,9 @@ const Login = () => {
       {!isRegistering? (
         <div className='form-container'>
           <form className='form login-form' onSubmit={handleSubmit}>
-            <h1>Login</h1>
             {/* Username input field */}
             <div className='form-group'>
-              <label>Username</label>
+              <label>Username: </label>
               <input
                 className='form-input'
                 type='text'
@@ -228,7 +227,7 @@ const Login = () => {
             </div>
             {/* Password input field */}
             <div className='form-group'>
-              <label>Password</label>
+              <label>Password: </label>
               <input
                 className='form-input'
                 type='password'
@@ -241,18 +240,20 @@ const Login = () => {
             <div className='form-group'>
               <button className='btn btn-primary' type='submit'>Login</button>
             </div>
-          </form>
-          <div>
-            <button className="link-button" onClick={() => setIsRegistering(true)}>Register</button>
-          </div>
+            <div>
+              <button className="link-button" type="button" onClick={(event: FormEvent) => {
+                setIsRegistering(true);
+                event.preventDefault();
+              }}>Register</button>
+            </div>   
+          </form>         
         </div>
         ) : (
           <div className='form-container'>
             <form className='form registration-form' onSubmit={handleSubmitRegistration}>
-              <h1>Login</h1>
               {/* Username input field */}
               <div className='form-group'>
-                <label>Username</label>
+                <label>Username: </label>
                 <input
                   className='form-input'
                   type='text'
@@ -263,7 +264,7 @@ const Login = () => {
               </div>
               {/* email input field */}
               <div className='form-group'>
-                <label>Email</label>
+                <label>Email: </label>
                 <input
                   className='form-input'
                   type='text'
@@ -274,7 +275,7 @@ const Login = () => {
               </div>
               {/* Password input field */}
               <div className='form-group'>
-                <label>Password</label>
+                <label>Password: </label>
                 <input
                   className='form-input'
                   type='password'
@@ -285,10 +286,13 @@ const Login = () => {
               </div>
               {/* Submit button for the login form */}
               <div className='form-group'>
-                <button className='btn btn-primary' type='submit'>REGISTER!</button>
+                <button className='btn btn-primary' type='submit'>Register New User!</button>
               </div>
               <div>
-                <button className="link-button" onClick={() => setIsRegistering(false)}>Return to Login</button>
+                <button className="link-button" type="button" onClick={(event: FormEvent) => {
+                  setIsRegistering(false);
+                  event.preventDefault();
+                }}>Return to Login</button>
               </div>
             </form>
             {/* <div>
