@@ -1,5 +1,6 @@
 import { getFavorites } from "./favoriteGames-api";
 import { RawgData } from "../interfaces/RawgData";
+import auth from "../utils/auth";
 
 function getRandomGame(gameArray: string[]) {
     const randomIndex = Math.floor(Math.random() * gameArray.length);
@@ -42,7 +43,9 @@ function buildGeminiArray(favsArray: RawgData[]): string[] {
 
 export const getRec = async () => {
     try {
-        const favsArray = await getFavorites(1);
+        let user: number = 0;
+        user = auth.selectUser();
+        const favsArray = await getFavorites(user);
         const geminiArray = buildGeminiArray(favsArray);
         const paramArray = geminiArray.toString();
 

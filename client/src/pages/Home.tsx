@@ -5,10 +5,12 @@ import { getFavorites, insertFavorites } from "../api/favoriteGames-api";
 import { RawgData } from "../interfaces/RawgData";
 import RecsPanel from "../components/GameRecs";
 import auth from "../utils/auth";
-import { UserData } from "../interfaces/UserData";
 
 //return code
 export default function Home() {
+    // useState for the current user_id
+    const [currentUser, setCurrentUser] = useState<number>(0);
+
     // useState for the RAWG search field
     const [search, setSearch] = useState<string>('');
     const handleInputchange = (e: any) => {
@@ -54,24 +56,6 @@ export default function Home() {
             console.log('setPanel true');
             setRecMessage('Enough of the Oracle.');
         }
-    };
-
-    // useState for the current user_id
-    const [currentUser, setCurrentUser] = useState<number>(0);
-
-    // Function to extract current user ID from JWT
-    const extractJWT = () => {
-        const loggedIn = auth.loggedIn();
-        console.log(loggedIn);
-        if (loggedIn) {
-            const token: UserData = auth.extractID() as UserData;
-            console.log(token);
-            setCurrentUser(token.id);
-        } else {
-            console.log("Please login to view saved favorites.");
-            setCurrentUser(0);
-        };
-        return;
     };
 
     // Troubleshooting function to display useState for the saved user favorites
@@ -203,7 +187,7 @@ export default function Home() {
         }
     };
 
-    useEffect(() => {extractJWT();}, []);
+    useEffect(() => {setCurrentUser(auth.selectUser())}, []);
 
     return (
         <>
