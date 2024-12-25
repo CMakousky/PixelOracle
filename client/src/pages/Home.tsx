@@ -28,12 +28,7 @@ export default function Home() {
         setIndexSlug(value);
     };
     // useState for the saved user favorites
-    const [userFavorites, setUserFavorites] = useState<RawgData[]>([{
-        name: '',
-        slug: '',
-        background_image: '',
-        released: ''
-    }]);
+    const [userFavorites, setUserFavorites] = useState<RawgData[]>([] as RawgData[]);
     // useState for pending changes to the user favorites
     const [newFavorites, setNewFavorites] = useState<RawgData[]>([] as RawgData[]);
     

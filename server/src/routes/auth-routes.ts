@@ -9,6 +9,7 @@ export const login = async (req: Request, res: Response) => {
   // Find the user in the database by username
   const user = await User.findOne({
     where: { username },
+    // attributes: { exclude: ['favorites'] }
   });
 
   // If user is not found, send an authentication failed response
