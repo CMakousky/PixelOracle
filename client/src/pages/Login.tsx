@@ -2,6 +2,8 @@ import { useState, FormEvent, ChangeEvent } from "react";
 import Auth from '../utils/auth';
 import { login } from '../api/authAPI';
 import type { UserLogin } from '../interfaces/UserLogin';
+import type { RegisterUser } from "../interfaces/RegisterUser";
+import { newUser } from "../api/favoriteGames-api";
 // import bcrypt from "bcryptjs";
 // import { useNavigate } from "react-router-dom";
 import "./Login.css";
@@ -12,7 +14,7 @@ const Login = () => {
   // const [password, setPassword] = useState("");
   // const [token, setToken] = useState<string | null>(null);
   // const [error, setError] = useState("");
-  // const [isRegistering, setIsRegistering] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
 
   const [loginData, setLoginData] = useState<UserLogin>({
@@ -20,9 +22,13 @@ const Login = () => {
     password: '',
   });
 
-  // const [loginData, setLoginData] = useState<UserLogin>({} as UserLogin);
+  const [registrationData, setRegistrationData] = useState<RegisterUser>({
+    username: '',
+    email: '',
+    password: '',
+  });
 
-  // Handle changes in the input fields
+  // Handle changes in the LOGIN input fields
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setLoginData({
@@ -30,6 +36,15 @@ const Login = () => {
       [name]: value,
     });
   };
+
+    // Handle changes in the REGISTRATION input fields
+    const handleChangeR = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setRegistrationData({
+        ...registrationData,
+        [name]: value,
+      });
+    };
 
   // Handle form submission for login
   const handleSubmit = async (e: FormEvent) => {
@@ -44,6 +59,20 @@ const Login = () => {
     }
   };
 
+  // Handle form submission for registration
+  const handleSubmitRegistration = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      if (registrationData.username.length > 0 && registrationData.email.length > 0 && registrationData.password.length > 0) {
+        await newUser(registrationData);
+        setIsRegistering(false);
+      } else {console.log('REGISTRATION FAILED! Please complete all fields.')};
+    } catch (err) {
+      console.error('Failed to Register.', err);
+    }
+  };
+
+  // const [loginData, setLoginData] = useState<UserLogin>({} as UserLogin);
   // const navigate = useNavigate();
 
   // const handleRegister = async (e: React.FormEvent) => {
@@ -108,9 +137,9 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      <h1>Login Page</h1>
-      {/* <h1>RAWG API {isRegistering ? "Register" : "Login"}</h1>
-      {token ? (
+      {/* <h1>Login Page</h1> */}
+      <h1>{isRegistering ? "Register" : "Login"}</h1>
+      {/* {token ? (
         <div>
           <p>Welcome to PixelOracle! You are logged in.</p>
           <button
@@ -182,38 +211,93 @@ const Login = () => {
           )}
         </p>
       )} */}
+      {!isRegistering? (
+        <div className='form-container'>
+          <form className='form login-form' onSubmit={handleSubmit}>
+            <h1>Login</h1>
+            {/* Username input field */}
+            <div className='form-group'>
+              <label>Username</label>
+              <input
+                className='form-input'
+                type='text'
+                name='username'
+                value={loginData.username || ''}
+                onChange={handleChange}
+              />
+            </div>
+            {/* Password input field */}
+            <div className='form-group'>
+              <label>Password</label>
+              <input
+                className='form-input'
+                type='password'
+                name='password'
+                value={loginData.password || ''}
+                onChange={handleChange}
+              />
+            </div>
+            {/* Submit button for the login form */}
+            <div className='form-group'>
+              <button className='btn btn-primary' type='submit'>Login</button>
+            </div>
+          </form>
+          <div>
+            <button className="link-button" onClick={() => setIsRegistering(true)}>Register</button>
+          </div>
+        </div>
+        ) : (
+          <div className='form-container'>
+            <form className='form registration-form' onSubmit={handleSubmitRegistration}>
+              <h1>Login</h1>
+              {/* Username input field */}
+              <div className='form-group'>
+                <label>Username</label>
+                <input
+                  className='form-input'
+                  type='text'
+                  name='username'
+                  value={registrationData.username || ''}
+                  onChange={handleChangeR}
+                />
+              </div>
+              {/* email input field */}
+              <div className='form-group'>
+                <label>Email</label>
+                <input
+                  className='form-input'
+                  type='text'
+                  name='email'
+                  value={registrationData.email || ''}
+                  onChange={handleChangeR}
+                />
+              </div>
+              {/* Password input field */}
+              <div className='form-group'>
+                <label>Password</label>
+                <input
+                  className='form-input'
+                  type='password'
+                  name='password'
+                  value={registrationData.password || ''}
+                  onChange={handleChangeR}
+                />
+              </div>
+              {/* Submit button for the login form */}
+              <div className='form-group'>
+                <button className='btn btn-primary' type='submit'>REGISTER!</button>
+              </div>
+              <div>
+                <button className="link-button" onClick={() => setIsRegistering(false)}>Return to Login</button>
+              </div>
+            </form>
+            {/* <div>
+              <button className="link-button" onClick={() => setIsRegistering(false)}>Return to Login</button>
+            </div> */}
+          </div>
+        )
+      }
 
-      <div className='form-container'>
-        <form className='form login-form' onSubmit={handleSubmit}>
-          <h1>Login</h1>
-          {/* Username input field */}
-          <div className='form-group'>
-            <label>Username</label>
-            <input
-              className='form-input'
-              type='text'
-              name='username'
-              value={loginData.username || ''}
-              onChange={handleChange}
-            />
-          </div>
-          {/* Password input field */}
-          <div className='form-group'>
-            <label>Password</label>
-            <input
-              className='form-input'
-              type='password'
-              name='password'
-              value={loginData.password || ''}
-              onChange={handleChange}
-            />
-          </div>
-          {/* Submit button for the login form */}
-          <div className='form-group'>
-            <button className='btn btn-primary' type='submit'>Login</button>
-          </div>
-        </form>
-      </div>
 
       {/* <button className="home-button" onClick={() => navigate("/")}>
         Go Back to Home
