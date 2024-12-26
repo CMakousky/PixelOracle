@@ -50,6 +50,10 @@ export const getRec = async () => {
         const paramArray = geminiArray.toString();
 
         const response = await fetch(`/api/Gemini/${paramArray}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${auth.getToken()}`
+            },
             method: 'GET',
         })
 

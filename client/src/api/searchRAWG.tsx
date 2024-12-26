@@ -1,10 +1,12 @@
 import { RawgData } from "../interfaces/RawgData";
+import auth from "../utils/auth";
 
 const searchAllGames = async (): Promise<RawgData> => {
     try {
       const response = await fetch('/api/RAWG/allGames', {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.getToken()}`
         }
       });
       const data = await response.json();
@@ -24,6 +26,7 @@ const searchAllGames = async (): Promise<RawgData> => {
       const response = await fetch(`/api/RAWG/gamesByName/${title}`, {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.getToken()}`
         }
       });
       const data = await response.json();
@@ -43,6 +46,7 @@ const searchAllGames = async (): Promise<RawgData> => {
       const response = await fetch(`/api/RAWG/gameInfo/${id}`, {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.getToken()}`
         }
       });
       const data = await response.json();
@@ -62,6 +66,7 @@ const searchAllGames = async (): Promise<RawgData> => {
       const response = await fetch(`/api/RAWG/gameInfoSlug/${slug}`, {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.getToken()}`
         }
       });
       const data = await response.json();
