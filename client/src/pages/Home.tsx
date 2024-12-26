@@ -63,10 +63,19 @@ export default function Home() {
     const [cardArray, setCardArray] = useState<JSX.Element>(<></>);
 
     // Function to create an array of display cards
-    const showCards = (favorites: RawgData[]) => {
+    const showCards = async (favorites: RawgData[]) => {
         return(
             <>
-                {favorites.map((favorite) => {return(<GameCard game={favorite}/>)})}
+            {favorites.map(
+                    (favoriteGame: RawgData) => {
+                        return(
+                            <>
+                            <GameCard game={favoriteGame}/>
+                            </>
+                        )
+                    }
+                )
+            }
             </>
         );
     };
@@ -82,7 +91,7 @@ export default function Home() {
 
     // Function to clean the reply data from RAWG
     const cleanResults = async (data: RawgData) => {
-        const conversion = [{
+        const conversion: RawgData[] = [{
             name: `${data.name}`,
             slug: `${data.slug}`,
             background_image: `${data.background_image}`,
@@ -105,6 +114,9 @@ export default function Home() {
             const data: RawgData[] = await getFavorites(currentUser);
             // Update the "userFavorites" useState with data retrieved from server
             setUserFavorites(data);
+            // Clear the newFavorites useState
+            const clearNewFavorites = [] as RawgData[];
+            setNewFavorites(clearNewFavorites);
             return data;
         } catch (err) {
             console.error('No matches found!', err);
@@ -115,7 +127,7 @@ export default function Home() {
     const displayUserFavorites = async () => {
         try {
             const savedFavorites = await getUserFavorites();
-            if (savedFavorites !== undefined && savedFavorites.length > 0) {setCardArray(showCards(savedFavorites))};
+            if (savedFavorites !== undefined && savedFavorites.length > 0) {setCardArray( await showCards(savedFavorites))};
             console.log("SAVED FAVORITES:", savedFavorites);
         } catch (err) {
             console.error('No matches found!', err);
@@ -126,8 +138,8 @@ export default function Home() {
     const updateFavorites = async () => {
         if (newFavorites.length !== 0 && newFavorites !== oldFavorites) {
             await insertFavorites(currentUser, newFavorites);
-            setCardArray(showCards(newFavorites));
             setOldFavorites(newFavorites);
+            await displayUserFavorites();
         } else {
             console.log("NO PENDING CHANGES TO FAVORITES.");
         }
@@ -138,28 +150,27 @@ export default function Home() {
         event.preventDefault();
         try {
             // Search RAWG database for game info by slug
-            const data = await gameInfoSlug(gameSlug);
+            const data: RawgData = await gameInfoSlug(gameSlug);
             console.log(data);
             // Clean the data to match the custom RawgData type
-            const cleanData = await cleanResults(data);
+            const cleanData: RawgData[] = await cleanResults(data);
             console.log("Appending search results to Pending Favorites List.");
             // Concatenate the cleaned data with the array of existing user favorites
-            const newArray = await concatenateThings(cleanData);
+            const newArray: RawgData[] = await concatenateThings(cleanData);
             console.log("PENDING FAVORITES LIST:", newArray);
             // Update the "newFavorites" useState with the favoritesArray
             setNewFavorites(newArray);
             // Display the Pending Favorites List
-            setCardArray(showCards(newArray));
+            setCardArray(await showCards(newArray));
         } catch (err) {
             console.error('No matches found!', err);
         }
     };
 
     // Function to locate the index of a specific favorite object and remove it from the array
-    const removeFavoriteBySlug = async (event: FormEvent, slug: string) => {
-        event.preventDefault();
+    const removeFavoriteBySlug = async (slug: string) => {
         try {
-            let resultsIndex;
+            let resultsIndex: number;
             if (newFavorites.length === 0) {
                 resultsIndex = userFavorites.findIndex((element) => (element.slug === `${slug}`));
             } else {
@@ -168,54 +179,55 @@ export default function Home() {
             if (resultsIndex !== -1 && newFavorites.length === 0) {
                 console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
                 // Slice the contents of userFavorites from index zero up to, but not including, resultsIndex into arrayLeft
-                const arrayLeft = userFavorites.slice(0, resultsIndex);
+                const arrayLeft: RawgData[] = userFavorites.slice(0, resultsIndex);
                 // Slice the contents of userFavorites from resultsIndex into arrayLeft
-                const arrayRight = userFavorites.slice(resultsIndex+1);
+                const arrayRight: RawgData[] = userFavorites.slice(resultsIndex+1);
                 // Concatenate arrayLeft and arrayRight
-                const newArray = [...arrayLeft, ...arrayRight]
+                const newArray: RawgData[] = [...arrayLeft, ...arrayRight]
                 console.log("PENDING FAVORITES LIST:", newArray);
-                // Update the "newFavorites" useState with [...arrayLeft, ...arrayRight]
+                // Update the "newFavorites" useState with newArray
                 setNewFavorites(newArray);
                 // Display the game cards for pending favorites
-                setCardArray(showCards(newArray));
+                setCardArray(await showCards(newArray));
             } else if (resultsIndex !== -1 && newFavorites.length !== 0) {
                 console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
                 // Slice the contents of userFavorites from index zero up to, but not including, resultsIndex into arrayLeft
-                const arrayLeft = newFavorites.slice(0, resultsIndex);
+                const arrayLeft: RawgData[] = newFavorites.slice(0, resultsIndex);
                 // Slice the contents of userFavorites from resultsIndex into arrayLeft
-                const arrayRight = newFavorites.slice(resultsIndex+1);
+                const arrayRight: RawgData[] = newFavorites.slice(resultsIndex+1);
                 // Concatenate arrayLeft and arrayRight
-                const newArray = [...arrayLeft, ...arrayRight]
+                const newArray: RawgData[] = [...arrayLeft, ...arrayRight]
                 console.log("PENDING FAVORITES LIST:", newArray);
                 // Update the "newFavorites" useState with [...arrayLeft, ...arrayRight]
                 setNewFavorites(newArray);
                 // Display the game cards for pending favorites
-                setCardArray(showCards(newArray));
+                setCardArray(await showCards(newArray));
             } else {console.log(`Choose a slug from your favorites list.`)};
         } catch (err) {
             console.error('No matches found!', err);
-        }
+        };
     };
+    
 
     // Function stack above functions to automatically add info to games database
     const addRAWGtoFavorites = async (event: FormEvent, gameTitle: string) => {
         event.preventDefault();
         //Search RAWG for game by name
         try {
-            const search = await searchGamesByName(gameTitle);
+            const search: RawgData[] = await searchGamesByName(gameTitle);
             console.log("Search Results:", search);
             // Select the first result in the returned search data array
             const fav: RawgData = search[0];
             // Clean the data to match the custom RawgData type
             const conversion: RawgData[] = await cleanResults(fav);
             // Concatenate the cleaned data with the array of existing user favorites
-            const favoritesArray = await concatenateThings(conversion);
+            const favoritesArray: RawgData[] = await concatenateThings(conversion);
             // console.log('CONCAT', favoritesArray);
             console.log('PENDING FAVORITES LIST:', favoritesArray);
             // Update the "newFavorites" useState with the favoritesArray
             setNewFavorites(favoritesArray);
             // Display the game cards for pending favorites
-            setCardArray(showCards(favoritesArray));
+            setCardArray(await showCards(favoritesArray));
         } catch (error) {
             console.error('No Matches Found!', error);
         }
@@ -264,7 +276,11 @@ export default function Home() {
                 <button type="submit">SEARCH BY TITLE</button>
             </form>
 
-            <form className="searchArea" onSubmit={(event: FormEvent) => removeFavoriteBySlug(event, indexSlug)}>
+            <form className="searchArea" 
+                onSubmit={(event: FormEvent) => {
+                    event.preventDefault();
+                    removeFavoriteBySlug(indexSlug);
+                    }}>
                 <input
                     value={indexSlug}
                     placeholder="Flag Favorite for Deletion by Slug."

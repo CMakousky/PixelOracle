@@ -198,6 +198,10 @@ input:focus {
   align-self: center;
 }
 
+.arrayButton {
+  margin-bottom: 20px;
+}
+
 @keyframes fade {
   0%, 25%, 75%, 100% {
     opacity: 1;
