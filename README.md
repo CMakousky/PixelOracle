@@ -1,4 +1,4 @@
-# PixelOracle
+# PixelOracle-CM
 
 ## PixelOracle is an all-in-one site that allows users to add their favorite games to an array via RAWGDB, and get some recommendations based on those games.
 
