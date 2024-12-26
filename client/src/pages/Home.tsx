@@ -5,6 +5,7 @@ import { getFavorites, insertFavorites } from "../api/favoriteGames-api";
 import { RawgData } from "../interfaces/RawgData";
 import RecsPanel from "../components/GameRecs";
 import auth from "../utils/auth";
+import GameCard from "../components/GameCard";
 
 //return code
 export default function Home() {
@@ -58,6 +59,18 @@ export default function Home() {
         }
     };
 
+    // useState for rendering GameCards
+    const [cardArray, setCardArray] = useState<JSX.Element>(<></>);
+
+    // Function to create an array of display cards
+    const showCards = (favorites: RawgData[]) => {
+        return(
+            <>
+                {favorites.map((favorite) => {return(<GameCard game={favorite}/>)})}
+            </>
+        );
+    };
+
     // Troubleshooting function to display useState for the saved user favorites
     // const viewCurrentFavorites = async () => {
     //     console.log("CURRENT FAVORITES:"userFavorites)};
@@ -102,6 +115,7 @@ export default function Home() {
     const displayUserFavorites = async () => {
         try {
             const savedFavorites = await getUserFavorites();
+            if (savedFavorites !== undefined && savedFavorites.length > 0) {setCardArray(showCards(savedFavorites))};
             console.log("SAVED FAVORITES:", savedFavorites);
         } catch (err) {
             console.error('No matches found!', err);
@@ -206,6 +220,8 @@ export default function Home() {
                 <button type="button" onClick={() => updateFavorites()}>UPDATE FAVORITES LIST</button>
                 {/* <button type="button" onClick={() => viewNewFavorites()}>VIEW PENDING FAVORITES CHANGES</button> */}
             </form>
+
+            {cardArray}
 
             {/* search bar to build rawg request */}
             <form className="searchArea" onSubmit={(event: FormEvent) => searchGamesBySlug(event, search)}>

@@ -178,6 +178,23 @@ input:focus {
   margin: auto;
 }
 
+.gameCard {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  height: 400px;
+  width: 400px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gameCard img {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  border-radius: 10px;
+}
+
 @keyframes fade {
   0%, 25%, 75%, 100% {
     opacity: 1;

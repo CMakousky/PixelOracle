@@ -32,7 +32,7 @@ const login = async (userInfo: UserLogin) => {
 const newUser = async (newUserData: RegisterUser) => {
   console.log(`REGISTERING ${newUserData.username}.`);
   try {
-      const request = await fetch(`/api/users/`, {
+      const request = await fetch(`/newUser/`, {
       headers: {
           'Content-Type': 'application/json',
       },

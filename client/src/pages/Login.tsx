@@ -95,7 +95,7 @@ const Login = () => {
             </div>
             {/* Submit button for the login form */}
             <div className='form-group'>
-              <button className='btn btn-primary' type='submit'>Login</button>
+              <button className='btn btn-primary' type='submit' onSubmit={(event: FormEvent) => {event.stopPropagation()}}>Login</button>
             </div>
             <div>
               <button className="link-button" type="button" onClick={(event: FormEvent) => {
@@ -143,7 +143,7 @@ const Login = () => {
               </div>
               {/* Submit button for the login form */}
               <div className='form-group'>
-                <button className='btn btn-primary' type='submit'>Register New User!</button>
+                <button className='btn btn-primary' type='submit' onSubmit={(event: FormEvent) => {event.stopPropagation()}}>Register New User!</button>
               </div>
               <div>
                 <button className="link-button" type="button" onClick={(event: FormEvent) => {
