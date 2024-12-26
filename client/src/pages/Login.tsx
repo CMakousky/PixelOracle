@@ -4,24 +4,17 @@ import { login, newUser } from '../api/authAPI';
 import type { UserLogin } from '../interfaces/UserLogin';
 import type { RegisterUser } from "../interfaces/RegisterUser";
 
-// import bcrypt from "bcryptjs";
-// import { useNavigate } from "react-router-dom";
-import "./Login.css";
-
 const Login = () => {
-  // const [username, setUsername] = useState("");
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [token, setToken] = useState<string | null>(null);
-  // const [error, setError] = useState("");
+  // useState to track if the user is registering or logging in
   const [isRegistering, setIsRegistering] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
 
+  // useState to hold user login credentials
   const [loginData, setLoginData] = useState<UserLogin>({
     username: '',
     password: '',
   });
 
+  // useState to hold user registration information
   const [registrationData, setRegistrationData] = useState<RegisterUser>({
     username: '',
     email: '',
@@ -46,7 +39,7 @@ const Login = () => {
     });
   };
 
-  // Handle form submission for login
+  // Handle form submission for LOGIN
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
@@ -59,7 +52,7 @@ const Login = () => {
     }
   };
 
-  // Handle form submission for registration
+  // Handle form submission for REGISTRATION
   const handleSubmitRegistration = async (e: FormEvent) => {
     e.preventDefault();
     try {
@@ -72,145 +65,9 @@ const Login = () => {
     }
   };
 
-  // const [loginData, setLoginData] = useState<UserLogin>({} as UserLogin);
-  // const navigate = useNavigate();
-
-  // const handleRegister = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   setIsLoading(true);
-
-  //   try {
-  //     const existingUser = localStorage.getItem(`user_${username}`);
-  //     if (existingUser) {
-  //       setError("User already exists. Please log in.");
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     const hashedPassword = await bcrypt.hash(password, 10);
-  //     const userData = JSON.stringify({ username, email, password: hashedPassword });
-  //     localStorage.setItem(`user_${username}`, userData);
-
-  //     alert("Registration successful! Please log in.");
-  //     setIsRegistering(false);
-  //   } catch (err) {
-  //     console.error(err);
-  //     setError("Registration failed. Please try again.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  // const handleLogin = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   setIsLoading(true);
-
-  //   try {
-  //     const storedUser = localStorage.getItem(`user_${username}`);
-  //     if (!storedUser) {
-  //       setError("User not found. Please register.");
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     const { password: storedPassword } = JSON.parse(storedUser);
-  //     const passwordMatch = await bcrypt.compare(password, storedPassword);
-
-  //     if (passwordMatch) {
-  //       const mockToken = `mock_token_${Date.now()}`;
-  //       setToken(mockToken);
-  //       localStorage.setItem("rawg_token", mockToken);
-  //       alert("Login successful!");
-  //       //navigate("/dashboard"); // Navigate to dashboard
-  //     } else {
-  //       setError("Invalid credentials. Please try again.");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     setError("Login failed. Please try again.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   return (
     <div className="login-page">
-      {/* <h1>Login Page</h1> */}
       <h1>{isRegistering ? "Register" : "Login"}</h1>
-      {/* {token ? (
-        <div>
-          <p>Welcome to PixelOracle! You are logged in.</p>
-          <button
-            onClick={() => {
-              setToken(null);
-              localStorage.removeItem("rawg_token");
-              alert("Logged out successfully.");
-            }}
-          >
-            Log Out
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={isRegistering ? handleRegister : handleLogin}>
-          {isRegistering && (
-            <div className="form-group">
-              <label htmlFor="email">Email:</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-          )}
-          <div className="form-group">
-            <label htmlFor="username">Username:</label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Processing..." : isRegistering ? "Register" : "Log In"}
-          </button>
-          {error && <p className="error">{error}</p>}
-        </form>
-      )}
-      {!token && (
-        <p>
-          {isRegistering ? (
-            <>
-              Already have an account?{" "}
-              <button className="link-button" onClick={() => setIsRegistering(false)}>
-                Log In
-              </button>
-            </>
-          ) : (
-            <>
-              Don't have an account?{" "}
-              <button className="link-button" onClick={() => setIsRegistering(true)}>
-                Register
-              </button>
-            </>
-          )}
-        </p>
-      )} */}
       {!isRegistering? (
         <div className='form-container'>
           <form className='form login-form' onSubmit={handleSubmit}>
@@ -295,20 +152,11 @@ const Login = () => {
                 }}>Return to Login</button>
               </div>
             </form>
-            {/* <div>
-              <button className="link-button" onClick={() => setIsRegistering(false)}>Return to Login</button>
-            </div> */}
           </div>
         )
       }
-
-
-      {/* <button className="home-button" onClick={() => navigate("/")}>
-        Go Back to Home
-      </button> */}
     </div>
   );
 };
 
 export default Login;
-
