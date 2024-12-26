@@ -66,16 +66,18 @@ export default function Home() {
     const showCards = async (favorites: RawgData[]) => {
         return(
             <>
-            {favorites.map(
-                    (favoriteGame: RawgData) => {
-                        return(
-                            <>
-                            <GameCard game={favoriteGame}/>
-                            </>
-                        )
-                    }
-                )
-            }
+                <section className="displayCards">
+                {favorites.map(
+                        (favoriteGame: RawgData) => {
+                            return(
+                                <>
+                                <GameCard game={favoriteGame}/>
+                                </>
+                            )
+                        }
+                    )
+                }
+                </section>
             </>
         );
     };

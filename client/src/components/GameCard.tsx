@@ -12,9 +12,9 @@ const GameCard = ({ game }: GameCardProps) => {
                     <img src={`${game.background_image}`} alt={`${game.slug}`} />
                 </figure>
                 <article className="details">
-                    <h2>{`Title: ${game.name}`}</h2>
-                    <h2>{`Slug: ${game.slug}`}</h2>
-                    <h2>{`Released: ${game.released}`}</h2>
+                    <h2>Title:<br />{game.name}</h2>
+                    <h2>Slug:<br />{game.slug}</h2>
+                    <h2>Released:<br />{game.released}</h2>
                 </article>
             </section>
         </>
