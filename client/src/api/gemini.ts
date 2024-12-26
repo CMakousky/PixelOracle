@@ -47,7 +47,7 @@ export const getRec = async () => {
         user = auth.selectUser();
         const favsArray = await getFavorites(user);
         const geminiArray = buildGeminiArray(favsArray);
-        const paramArray = geminiArray.toString();
+        const paramArray = encodeURIComponent(geminiArray.toString());
 
         const response = await fetch(`/api/Gemini/${paramArray}`, {
             headers: {

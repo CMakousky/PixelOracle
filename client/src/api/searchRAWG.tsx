@@ -23,7 +23,8 @@ const searchAllGames = async (): Promise<RawgData> => {
   
   const searchGamesByName = async (title: string | null): Promise<RawgData[]> => {
     try {
-      const response = await fetch(`/api/RAWG/gamesByName/${title}`, {
+      const cleanTitle = encodeURIComponent(title as string);
+      const response = await fetch(`/api/RAWG/gamesByName/${cleanTitle}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${auth.getToken()}`

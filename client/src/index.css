@@ -222,6 +222,16 @@ input:focus {
   margin-bottom: 20px;
 }
 
+#loginBanner {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#statusDisplay {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 @keyframes fade {
   0%, 25%, 75%, 100% {
     opacity: 1;

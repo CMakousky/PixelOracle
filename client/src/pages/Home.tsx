@@ -12,6 +12,9 @@ export default function Home() {
     // useState for the current user_id
     const [currentUser, setCurrentUser] = useState<number>(0);
 
+    // useState to display the current userName
+    const [loginBanner, setLoginBanner] = useState<JSX.Element>(<></>);
+
     // useState for the RAWG search field
     const [search, setSearch] = useState<string>('');
     const handleInputchange = (e: any) => {
@@ -113,15 +116,18 @@ export default function Home() {
     // Function to retrieve favorite games list by user_id
     const getUserFavorites = async () => {
         try {
-            const data: RawgData[] = await getFavorites(currentUser);
-            // Update the "userFavorites" useState with data retrieved from server
-            setUserFavorites(data);
-            // Clear the newFavorites useState
-            const clearNewFavorites = [] as RawgData[];
-            setNewFavorites(clearNewFavorites);
-            return data;
+            if (currentUser !== 0) {
+                const data: RawgData[] = await getFavorites(currentUser);
+                // Update the "userFavorites" useState with data retrieved from server
+                setUserFavorites(data);
+                // Clear the newFavorites useState
+                const clearNewFavorites = [] as RawgData[];
+                setNewFavorites(clearNewFavorites);
+                return data;
+            } else {setCardArray(<><h2>PLEASE LOGIN TO VIEW <br /> SAVED FAVORITES.</h2></>)};
         } catch (err) {
             console.error('No matches found!', err);
+            setCardArray(<><h2>PLEASE LOGIN TO VIEW <br /> SAVED FAVORITES.</h2></>);
         }
     };
 
@@ -141,9 +147,11 @@ export default function Home() {
         if (newFavorites.length !== 0 && newFavorites !== oldFavorites) {
             await insertFavorites(currentUser, newFavorites);
             setOldFavorites(newFavorites);
-            await displayUserFavorites();
+            // await displayUserFavorites();
+            setCardArray(<><h2 className="statusDisplay">FAVORITES UPDATED!</h2></>);
         } else {
             console.log("NO PENDING CHANGES TO FAVORITES.");
+            setCardArray(<><h2 className="statusDisplay">NO PENDING CHANGES <br /> TO FAVORITES.</h2></>);
         }
     };
 
@@ -237,7 +245,11 @@ export default function Home() {
 
     useEffect(() => {
         const user = auth.selectUser();
-        if (user !== 0) {console.log(auth.getProfile())};
+        if (user !== 0) {
+            console.log(auth.getProfile());
+            const userName = auth.getUserName();
+            setLoginBanner(<><h2>Welcome {`${userName}`}!</h2></>);
+        };
         setCurrentUser(user);
     }, []);
 
@@ -245,6 +257,7 @@ export default function Home() {
         <>
             <div className="homeBanner">
                 <h1>PixelOracle</h1>
+                <h2 id="loginBanner">{loginBanner}</h2>
                 <p>Need a new game? Consult the Oracle...</p>
                 {/* background image - simple texture */}
             </div>

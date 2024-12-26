@@ -75,6 +75,18 @@ class AuthService {
     };
     return user;
   };
+
+  getUserName = (): string => {
+    const loggedIn = this.loggedIn();
+    let userName: string ='';
+    if (loggedIn) {
+        const token: UserData = this.extractID() as UserData;
+        userName = token.username;
+    } else {
+        console.log("USERNAME NOT FOUND!");
+    };
+    return userName;
+  };
 }
 
 export default new AuthService();
