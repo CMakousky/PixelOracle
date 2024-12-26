@@ -9,7 +9,7 @@ const GameCard = ({ game }: GameCardProps) => {
         <>
             <section className="gameCard">
                 <figure>
-                    <img src={`${game.background_image}`} alt={`${name}`} />
+                    <img src={`${game.background_image}`} alt={`${game.slug}`} />
                 </figure>
                 <article className="details">
                     <h2>{game.name}</h2>

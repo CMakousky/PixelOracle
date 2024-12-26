@@ -126,6 +126,7 @@ export default function Home() {
     const updateFavorites = async () => {
         if (newFavorites.length !== 0 && newFavorites !== oldFavorites) {
             await insertFavorites(currentUser, newFavorites);
+            setCardArray(showCards(newFavorites));
             setOldFavorites(newFavorites);
         } else {
             console.log("NO PENDING CHANGES TO FAVORITES.");
