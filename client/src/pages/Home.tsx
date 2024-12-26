@@ -165,7 +165,7 @@ export default function Home() {
             } else {
                 resultsIndex = newFavorites.findIndex((element) => (element.slug === `${slug}`));
             };
-            if (resultsIndex !== -1) {
+            if (resultsIndex !== -1 && newFavorites.length === 0) {
                 console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
                 // Slice the contents of userFavorites from index zero up to, but not including, resultsIndex into arrayLeft
                 const arrayLeft = userFavorites.slice(0, resultsIndex);
@@ -178,8 +178,20 @@ export default function Home() {
                 setNewFavorites(newArray);
                 // Display the game cards for pending favorites
                 setCardArray(showCards(newArray));
+            } else if (resultsIndex !== -1 && newFavorites.length !== 0) {
+                console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
+                // Slice the contents of userFavorites from index zero up to, but not including, resultsIndex into arrayLeft
+                const arrayLeft = newFavorites.slice(0, resultsIndex);
+                // Slice the contents of userFavorites from resultsIndex into arrayLeft
+                const arrayRight = newFavorites.slice(resultsIndex+1);
+                // Concatenate arrayLeft and arrayRight
+                const newArray = [...arrayLeft, ...arrayRight]
+                console.log("PENDING FAVORITES LIST:", newArray);
+                // Update the "newFavorites" useState with [...arrayLeft, ...arrayRight]
+                setNewFavorites(newArray);
+                // Display the game cards for pending favorites
+                setCardArray(showCards(newArray));
             } else {console.log(`Choose a slug from your favorites list.`)};
-
         } catch (err) {
             console.error('No matches found!', err);
         }
