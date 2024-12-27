@@ -106,13 +106,6 @@ export default function Home() {
         return conversion;
     };
 
-    // // Function to concatenate the user favorites with the new favorite selection
-    // const concatenateThings = async (things: RawgData[]) => {
-    //     let favoritesArray = [...userFavorites, ...things];
-    //     if (newFavorites.length !== 0) {favoritesArray = [...newFavorites, ...things]};
-    //     return favoritesArray;
-    // };
-
     // Function to concatenate the user favorites with the new favorite selection
     const concatenateThings = async (savedThings: RawgData[], pendingThings: RawgData[], things: RawgData[]) => {
         let favoritesArray = [...savedThings, ...things];

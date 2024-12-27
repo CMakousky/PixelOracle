@@ -45,11 +45,15 @@ const newUser = async (newUserData: RegisterUser) => {
           })
       });
       if(!request.ok) {
-      throw new Error('Registration Failed, check network tab!');
-      }
+        const errorData = await request.json(); // Parse error response as JSON
+        throw new Error(`${errorData.message}`); // Throw a detailed error message
+      } else {
+        const successConfirm = await request.json();
+        console.log(successConfirm.message);
+      };
   } catch (err) {
-      console.log('Error on data insertion:', err);
-      return Promise.reject('Unable to register user.');
+      console.log(err);
+      return Promise.reject(`Unable to register "${newUserData.username}" as a new user.`);
   }
 };
 
