@@ -180,36 +180,35 @@ export default function Home() {
     // Function to locate the index of a specific favorite object and remove it from the array
     const removeFavoriteBySlug = async (slug: string) => {
         try {
+            // Initialize local variable resultsIndex
             let resultsIndex: number;
+            // Function to remove the item at location resultsIndex from the selected favoritesArray
+            const removeFromNewFavorites = (resultsIndex: number, favoritesArray: RawgData[]) => {
+                console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
+                // Slice the contents of favoritesArray from index zero up to, but not including, resultsIndex into arrayLeft
+                const arrayLeft: RawgData[] = favoritesArray.slice(0, resultsIndex);
+                // Slice the contents of favoritesArray from resultsIndex into arrayLeft
+                const arrayRight: RawgData[] = favoritesArray.slice(resultsIndex+1);
+                // Concatenate arrayLeft and arrayRight
+                const newArray: RawgData[] = [...arrayLeft, ...arrayRight];
+                console.log("PENDING FAVORITES LIST:", newArray);
+                // Update the "newFavorites" useState with newArray
+                setNewFavorites(newArray);
+                return newArray;
+            };
             if (newFavorites.length === 0) {
                 resultsIndex = userFavorites.findIndex((element) => (element.slug === `${slug}`));
             } else {
                 resultsIndex = newFavorites.findIndex((element) => (element.slug === `${slug}`));
             };
             if (resultsIndex !== -1 && newFavorites.length === 0) {
-                console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
-                // Slice the contents of userFavorites from index zero up to, but not including, resultsIndex into arrayLeft
-                const arrayLeft: RawgData[] = userFavorites.slice(0, resultsIndex);
-                // Slice the contents of userFavorites from resultsIndex into arrayLeft
-                const arrayRight: RawgData[] = userFavorites.slice(resultsIndex+1);
-                // Concatenate arrayLeft and arrayRight
-                const newArray: RawgData[] = [...arrayLeft, ...arrayRight]
-                console.log("PENDING FAVORITES LIST:", newArray);
-                // Update the "newFavorites" useState with newArray
-                setNewFavorites(newArray);
+                // Remove the item at location resultsIndex from userFavorites
+                const newArray = removeFromNewFavorites(resultsIndex, userFavorites);
                 // Display the game cards for pending favorites
                 setCardArray(await showCards(newArray));
             } else if (resultsIndex !== -1 && newFavorites.length !== 0) {
-                console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
-                // Slice the contents of userFavorites from index zero up to, but not including, resultsIndex into arrayLeft
-                const arrayLeft: RawgData[] = newFavorites.slice(0, resultsIndex);
-                // Slice the contents of userFavorites from resultsIndex into arrayLeft
-                const arrayRight: RawgData[] = newFavorites.slice(resultsIndex+1);
-                // Concatenate arrayLeft and arrayRight
-                const newArray: RawgData[] = [...arrayLeft, ...arrayRight]
-                console.log("PENDING FAVORITES LIST:", newArray);
-                // Update the "newFavorites" useState with [...arrayLeft, ...arrayRight]
-                setNewFavorites(newArray);
+                // Remove the item at location resultsIndex from newFavorites
+                const newArray = removeFromNewFavorites(resultsIndex, newFavorites);
                 // Display the game cards for pending favorites
                 setCardArray(await showCards(newArray));
             } else {console.log(`Choose a slug from your favorites list.`)};
