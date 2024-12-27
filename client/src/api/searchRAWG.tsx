@@ -1,7 +1,7 @@
 import { RawgData } from "../interfaces/RawgData";
 import auth from "../utils/auth";
 
-const searchAllGames = async (): Promise<RawgData> => {
+const searchAllGames = async (): Promise<RawgData[]> => {
     try {
       const response = await fetch('/api/RAWG/allGames', {
         headers: {
@@ -21,9 +21,9 @@ const searchAllGames = async (): Promise<RawgData> => {
     }  
   };
   
-  const searchGamesByName = async (title: string | null): Promise<RawgData[]> => {
+  const searchGamesByName = async (title: string): Promise<RawgData[]> => {
     try {
-      const cleanTitle = encodeURIComponent(title as string);
+      const cleanTitle: string = encodeURIComponent(title);
       const response = await fetch(`/api/RAWG/gamesByName/${cleanTitle}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ const searchAllGames = async (): Promise<RawgData> => {
     }
   };
 
-  const gameInfo = async (id: string | null): Promise<RawgData> => {
+  const gameInfo = async (id: string): Promise<RawgData> => {
     try {
       const response = await fetch(`/api/RAWG/gameInfo/${id}`, {
         headers: {
@@ -62,7 +62,7 @@ const searchAllGames = async (): Promise<RawgData> => {
     }
   };
 
-  const gameInfoSlug = async (slug: string | null): Promise<RawgData> => {
+  const gameInfoSlug = async (slug: string): Promise<RawgData> => {
     try {
       const response = await fetch(`/api/RAWG/gameInfoSlug/${slug}`, {
         headers: {

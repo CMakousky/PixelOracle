@@ -24,8 +24,9 @@ router.get('/allGames', async (_req: Request, res: Response) => {
 // GET /gamesByName/:name - Get games from RAWG by name
 router.get('/gamesByName/:name', async (req: Request, res: Response) => {
   try {
-    console.log(`https://api.rawg.io/api/games?search=${req.params.name}&search_exact=true&key=${process.env.RAWG_API_KEY}`);
-    const response = await fetch(`https://api.rawg.io/api/games?search=${req.params.name}&search_exact=true&key=${process.env.RAWG_API_KEY}`);
+    const cleanName: string = encodeURIComponent(req.params.name);
+    console.log(`https://api.rawg.io/api/games?search=${cleanName}&search_exact=true&key=${process.env.RAWG_API_KEY}`);
+    const response = await fetch(`https://api.rawg.io/api/games?search=${cleanName}&search_exact=true&key=${process.env.RAWG_API_KEY}`);
     //console.log('Response:', response);
     const data = await response.json();
     if (!response.ok) {
