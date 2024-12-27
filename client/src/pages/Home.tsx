@@ -101,15 +101,22 @@ export default function Home() {
             slug: `${data.slug}`,
             background_image: `${data.background_image}`,
             released: `${data.released}`
-        }]
+        }];
         console.log('RAWG API reply cleaned to match custom RawgData type format.', conversion);
         return conversion;
     };
 
+    // // Function to concatenate the user favorites with the new favorite selection
+    // const concatenateThings = async (things: RawgData[]) => {
+    //     let favoritesArray = [...userFavorites, ...things];
+    //     if (newFavorites.length !== 0) {favoritesArray = [...newFavorites, ...things]};
+    //     return favoritesArray;
+    // };
+
     // Function to concatenate the user favorites with the new favorite selection
-    const concatenateThings = async (things: RawgData[]) => {
-        let favoritesArray = [...userFavorites, ...things]
-        if (newFavorites.length !== 0) {favoritesArray = [...newFavorites, ...things]};
+    const concatenateThings = async (savedThings: RawgData[], pendingThings: RawgData[], things: RawgData[]) => {
+        let favoritesArray = [...savedThings, ...things];
+        if (newFavorites.length !== 0) {favoritesArray = [...pendingThings, ...things]};
         return favoritesArray;
     };
 
@@ -138,7 +145,7 @@ export default function Home() {
             if (savedFavorites !== undefined && savedFavorites.length > 0) {setCardArray( await showCards(savedFavorites))};
             console.log("SAVED FAVORITES:", savedFavorites);
         } catch (err) {
-            console.error('No matches found!', err);
+            console.error('No saved favorites to display!', err);
         }
     };
 
@@ -166,7 +173,7 @@ export default function Home() {
             const cleanData: RawgData[] = await cleanResults(data);
             console.log("Appending search results to Pending Favorites List.");
             // Concatenate the cleaned data with the array of existing user favorites
-            const newArray: RawgData[] = await concatenateThings(cleanData);
+            const newArray: RawgData[] = await concatenateThings(userFavorites, newFavorites,  cleanData);
             console.log("PENDING FAVORITES LIST:", newArray);
             // Update the "newFavorites" useState with the favoritesArray
             setNewFavorites(newArray);
@@ -183,7 +190,7 @@ export default function Home() {
             // Initialize local variable resultsIndex
             let resultsIndex: number;
             // Function to remove the item at location resultsIndex from the selected favoritesArray
-            const removeFromNewFavorites = (resultsIndex: number, favoritesArray: RawgData[]) => {
+            const removeFromFavorites = (resultsIndex: number, favoritesArray: RawgData[]) => {
                 console.log(`Flagging favorite at index ${resultsIndex} of array for deletion.`);
                 // Slice the contents of favoritesArray from index zero up to, but not including, resultsIndex into arrayLeft
                 const arrayLeft: RawgData[] = favoritesArray.slice(0, resultsIndex);
@@ -203,17 +210,17 @@ export default function Home() {
             };
             if (resultsIndex !== -1 && newFavorites.length === 0) {
                 // Remove the item at location resultsIndex from userFavorites
-                const newArray = removeFromNewFavorites(resultsIndex, userFavorites);
+                const newArray = removeFromFavorites(resultsIndex, userFavorites);
                 // Display the game cards for pending favorites
                 setCardArray(await showCards(newArray));
             } else if (resultsIndex !== -1 && newFavorites.length !== 0) {
                 // Remove the item at location resultsIndex from newFavorites
-                const newArray = removeFromNewFavorites(resultsIndex, newFavorites);
+                const newArray = removeFromFavorites(resultsIndex, newFavorites);
                 // Display the game cards for pending favorites
                 setCardArray(await showCards(newArray));
             } else {console.log(`Choose a slug from your favorites list.`)};
         } catch (err) {
-            console.error('No matches found!', err);
+            console.error('Failed to execute removeFavoriteBySlug!', err);
         };
     };
     
@@ -230,7 +237,7 @@ export default function Home() {
             // Clean the data to match the custom RawgData type
             const conversion: RawgData[] = await cleanResults(fav);
             // Concatenate the cleaned data with the array of existing user favorites
-            const favoritesArray: RawgData[] = await concatenateThings(conversion);
+            const favoritesArray: RawgData[] = await concatenateThings(userFavorites, newFavorites, conversion);
             // console.log('CONCAT', favoritesArray);
             console.log('PENDING FAVORITES LIST:', favoritesArray);
             // Update the "newFavorites" useState with the favoritesArray
