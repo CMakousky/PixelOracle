@@ -248,7 +248,7 @@ export default function Home() {
         if (user !== 0) {
             console.log(auth.getProfile());
             const userName = auth.getUserName();
-            setLoginBanner(<><h2>Welcome {`${userName}`}!</h2></>);
+            setLoginBanner(<><h2 id="loginBanner">Welcome {`${userName}`}!</h2></>);
         };
         setCurrentUser(user);
     }, []);
@@ -257,7 +257,7 @@ export default function Home() {
         <>
             <div className="homeBanner">
                 <h1>PixelOracle</h1>
-                <h2 id="loginBanner">{loginBanner}</h2>
+                {loginBanner}
                 <p>Need a new game? Consult the Oracle...</p>
                 {/* background image - simple texture */}
             </div>
