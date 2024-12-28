@@ -2,9 +2,12 @@ import { RawgData } from "../interfaces/RawgData";
 
 type GameCardProps = {
     game: RawgData;
+    removeFavoriteBySlug(slug: string, savedFavorites: RawgData[], pendingFavorites: RawgData[]): Promise<void>;
+    savedFavorites: RawgData[];
+    pendingFavorites: RawgData[];
 };
 
-const GameCard = ({ game }: GameCardProps) => {
+const GameCard = ({ game, removeFavoriteBySlug, savedFavorites, pendingFavorites }: GameCardProps) => {
     return (
         <>
             <section className="gameCard" id={`${game.slug}`}>
@@ -16,6 +19,13 @@ const GameCard = ({ game }: GameCardProps) => {
                     <h2>Slug:<br />{game.slug}</h2>
                     <h2>Released:<br />{game.released}</h2>
                 </article>
+                <button 
+                    className="arrayButton" 
+                    type="button" 
+                    onClick={() => {
+                        removeFavoriteBySlug(game.slug as string, savedFavorites, pendingFavorites)}}>
+                        Delete {game.name}
+                </button>
             </section>
         </>
     );

@@ -70,16 +70,21 @@ export default function Home() {
         return(
             <>
                 <section className="displayCards">
-                {favorites.map(
-                        (favoriteGame: RawgData) => {
-                            return(
-                                <>
-                                <GameCard game={favoriteGame}/>
-                                </>
-                            )
-                        }
-                    )
-                }
+                    {favorites.map(
+                            (favoriteGame: RawgData) => {
+                                return(
+                                    <>
+                                        <GameCard 
+                                            game={favoriteGame}
+                                            removeFavoriteBySlug={removeFavoriteBySlug}
+                                            savedFavorites={favorites}
+                                            pendingFavorites={newFavorites}
+                                        />
+                                    </>
+                                )
+                            }
+                        )
+                    }
                 </section>
             </>
         );
@@ -124,10 +129,9 @@ export default function Home() {
                 const clearNewFavorites = [] as RawgData[];
                 setNewFavorites(clearNewFavorites);
                 return data;
-            } else {setCardArray(<><h2>PLEASE LOGIN TO VIEW <br /> SAVED FAVORITES.</h2></>)};
+            };
         } catch (err) {
             console.error('No matches found!', err);
-            setCardArray(<><h2>PLEASE LOGIN TO VIEW <br /> SAVED FAVORITES.</h2></>);
         }
     };
 
@@ -135,8 +139,11 @@ export default function Home() {
     const displayUserFavorites = async () => {
         try {
             const savedFavorites = await getUserFavorites();
-            if (savedFavorites !== undefined && savedFavorites.length > 0) {setCardArray( await showCards(savedFavorites))};
-            console.log("SAVED FAVORITES:", savedFavorites);
+            if (savedFavorites !== undefined && savedFavorites.length > 0) {
+                setCardArray( await showCards(savedFavorites));
+                console.log("SAVED FAVORITES:", savedFavorites);
+            } else {setCardArray(<><h2>PLEASE LOGIN TO VIEW <br /> SAVED FAVORITES.</h2></>)};
+
         } catch (err) {
             console.error('No saved favorites to display!', err);
         }
@@ -178,7 +185,7 @@ export default function Home() {
     };
 
     // Function to locate the index of a specific favorite object and remove it from the array
-    const removeFavoriteBySlug = async (slug: string) => {
+    const removeFavoriteBySlug = async (slug: string, savedFavorites: RawgData[], pendingFavorites: RawgData[]) => {
         try {
             // Initialize local variable resultsIndex
             let resultsIndex: number;
@@ -196,19 +203,19 @@ export default function Home() {
                 setNewFavorites(newArray);
                 return newArray;
             };
-            if (newFavorites.length === 0) {
-                resultsIndex = userFavorites.findIndex((element) => (element.slug === `${slug}`));
+            if (pendingFavorites.length === 0) {
+                resultsIndex = savedFavorites.findIndex((element) => (element.slug === `${slug}`));
             } else {
-                resultsIndex = newFavorites.findIndex((element) => (element.slug === `${slug}`));
+                resultsIndex = pendingFavorites.findIndex((element) => (element.slug === `${slug}`));
             };
-            if (resultsIndex !== -1 && newFavorites.length === 0) {
-                // Remove the item at location resultsIndex from userFavorites
-                const newArray = removeFromFavorites(resultsIndex, userFavorites);
+            if (resultsIndex !== -1 && pendingFavorites.length === 0) {
+                // Remove the item at location resultsIndex from savedFavorites
+                const newArray = removeFromFavorites(resultsIndex, savedFavorites);
                 // Display the game cards for pending favorites
                 setCardArray(await showCards(newArray));
-            } else if (resultsIndex !== -1 && newFavorites.length !== 0) {
-                // Remove the item at location resultsIndex from newFavorites
-                const newArray = removeFromFavorites(resultsIndex, newFavorites);
+            } else if (resultsIndex !== -1 && pendingFavorites.length !== 0) {
+                // Remove the item at location resultsIndex from pendingFavorites
+                const newArray = removeFromFavorites(resultsIndex, pendingFavorites);
                 // Display the game cards for pending favorites
                 setCardArray(await showCards(newArray));
             } else {console.log(`Choose a slug from your favorites list.`)};
@@ -216,7 +223,6 @@ export default function Home() {
             console.error('Failed to execute removeFavoriteBySlug!', err);
         };
     };
-    
 
     // Function stack above functions to automatically add info to games database
     const addRAWGtoFavorites = async (event: FormEvent, gameTitle: string) => {
@@ -293,7 +299,7 @@ export default function Home() {
             <form className="searchArea" 
                 onSubmit={(event: FormEvent) => {
                     event.preventDefault();
-                    removeFavoriteBySlug(indexSlug);
+                    removeFavoriteBySlug(indexSlug, userFavorites, newFavorites);
                     }}>
                 <input
                     value={indexSlug}
