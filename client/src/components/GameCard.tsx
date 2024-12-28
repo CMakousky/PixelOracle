@@ -23,8 +23,9 @@ const GameCard = ({ game, removeFavoriteBySlug, savedFavorites, pendingFavorites
                     className="arrayButton" 
                     type="button" 
                     onClick={() => {
-                        removeFavoriteBySlug(game.slug as string, savedFavorites, pendingFavorites)}}>
-                        Delete {game.name}
+                        removeFavoriteBySlug(game.slug as string, savedFavorites, pendingFavorites)
+                    }}>
+                    Remove from favorites
                 </button>
             </section>
         </>
