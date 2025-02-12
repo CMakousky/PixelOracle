@@ -4,6 +4,8 @@
 
 ## Description
 
+![plot](./images/PixelOracle-CM.jpg)
+
 "PixelOracle uses a local PostgreSQL Database to save users game selections as delivered by the RAWG API. Then, the user can pass those games on to Google's Gemini LLR to receieve a list of recommended games, which they can then search and add."
 
 
