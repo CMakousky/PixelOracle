@@ -35,7 +35,7 @@
 
 ## Usage
 
-Visit our deployed link here: pixeloracle.onrender.com
+Visit the deployed web application here: https://pixeloracle-cm.onrender.com/
 
 Use the search bar to add your favorite games to your list, then submit that list by Consulting the Oracle.
 
